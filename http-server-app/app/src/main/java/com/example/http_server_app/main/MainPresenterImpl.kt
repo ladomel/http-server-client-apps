@@ -52,7 +52,7 @@ class MainPresenterImpl(var db: AppDatabase) : MainContract.Presenter {
         run {
             when (exchange!!.requestMethod) {
                 "GET" -> {
-                    sendResponse(exchange, 200, "Server is alive!!!")
+                    sendResponse(exchange, 200, "{\"status\": \"OK\"}")
                 }
             }
         }

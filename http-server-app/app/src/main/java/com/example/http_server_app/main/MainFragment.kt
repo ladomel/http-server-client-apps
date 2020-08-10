@@ -26,13 +26,16 @@ class MainFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_main, container, false)
 
         val textView = v.findViewById<TextView>(R.id.text)
-        v.findViewById<Button>(R.id.toggleServer).setOnClickListener {
+        val button = v.findViewById<Button>(R.id.toggleServer)
+        button.setOnClickListener {
             if (presenter.isServerRunning()) {
                 presenter.stopServer()
                 textView.text = "Server Stopped!!!"
+                button.text = "Start Server"
             } else {
                 presenter.startServer()
                 textView.text = "Server Started!!!"
+                button.text = "Stop Server"
             }
         }
 
