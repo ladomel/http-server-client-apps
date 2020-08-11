@@ -31,7 +31,7 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:textAlignment="center"
-            android:hint="Enter your nickname"
+            android:hint="@string/enter_your_nickname"
             android:background="@drawable/round_shape"
             android:gravity="center"
             android:layout_marginVertical="5dp"/>
@@ -43,7 +43,7 @@
             android:ems="10"
             android:textAlignment="center"
             android:inputType="textPersonName"
-            android:hint="What I do"
+            android:hint="@string/what_i_do"
             android:background="@drawable/round_shape"
             android:gravity="center"
             android:layout_marginVertical="5dp"/>
@@ -52,7 +52,7 @@
             android:id="@+id/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start"
+            android:text="@string/start"
             android:layout_marginTop="50dp"
             app:backgroundTint="@color/colorBlue"/>
     </LinearLayout>

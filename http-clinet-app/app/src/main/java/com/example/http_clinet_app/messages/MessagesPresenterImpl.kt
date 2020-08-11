@@ -5,19 +5,28 @@ import com.example.http_clinet_app.network.MessageApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class MessagesPresenterImpl(var view: MessagesContract.View): MessagesContract.Presenter {
 
     override fun loadMessages(chatId: Int) {
-        MessageApi.retrofitService.loadMessages(chatId).enqueue(object : Callback<List<Message>> {
-            override fun onFailure(call: Call<List<Message>>, t: Throwable) {
-                view.showError("Couldn't load messages!")
-            }
+        Timer().scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                MessageApi.retrofitService.loadMessages(chatId)
+                    .enqueue(object : Callback<List<Message>> {
+                        override fun onFailure(call: Call<List<Message>>, t: Throwable) {
+                            view.showError("Couldn't load messages!")
+                        }
 
-            override fun onResponse(call: Call<List<Message>>, response: Response<List<Message>>) {
-                response.body()?.let { view.setData(it) }
+                        override fun onResponse(
+                            call: Call<List<Message>>,
+                            response: Response<List<Message>>
+                        ) {
+                            response.body()?.let { view.setData(it) }
+                        }
+                    })
             }
-        })
+        }, 0L, 10000L)
     }
 
     override fun sendMessage(message: Message) {

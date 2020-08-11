@@ -1,6 +1,7 @@
 package com.example.http_clinet_app.network
 
 import com.example.http_clinet_app.model.Chat
+import com.example.http_clinet_app.model.ChatCreateModel
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -13,7 +14,7 @@ interface ChatApiService {
     ): Call<List<Chat>>
 
     @POST("chat")
-    fun createChat(@Body body: Chat): Call<Chat>
+    fun createChat(@Body body: ChatCreateModel): Call<Chat>
 
     @DELETE("chat")
     fun deleteChat()

@@ -1,14 +1,14 @@
 package com.example.http_clinet_app.messages
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -30,6 +30,7 @@ class MessagesFragment : Fragment(), MessagesContract.View {
     private lateinit var chat: Chat
     private lateinit var recyclerView: RecyclerView
     private lateinit var messagesData: MutableList<Message>
+    private lateinit var scrollView: NestedScrollView
     private val args: MessagesFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -61,6 +62,11 @@ class MessagesFragment : Fragment(), MessagesContract.View {
             presenter.sendMessage(Message(0, chat.id, userId, textField.text.toString(), Date()))
             textField.setText("")
             textField.clearFocus()
+
+            val imm = context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+
+            scrollView.fullScroll(ScrollView.FOCUS_DOWN)
         }
 
         val imageView = v.findViewById<ImageView>(R.id.image)
@@ -77,6 +83,11 @@ class MessagesFragment : Fragment(), MessagesContract.View {
             layoutManager = LinearLayoutManager(recyclerView.context)
         }
 
+        scrollView = v.findViewById(R.id.scrollView)
+        scrollView.post {
+            scrollView.fullScroll(View.FOCUS_DOWN)
+        }
+
         presenter.loadMessages(chat.id)
 
         return v
@@ -90,7 +101,8 @@ class MessagesFragment : Fragment(), MessagesContract.View {
         messagesData = data.toMutableList()
         recyclerView.swapAdapter(MessagesAdapter(
             currentUserId = userId,
-            data = data
+            data = data,
+            scrollView = scrollView
         ), true)
     }
 

@@ -44,8 +44,8 @@
 
     <TextView
         android:id="@+id/time"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_height="wrap_content"
-        android:text="1 min" />
+        android:text="dd/mm/yyyy" />
 </LinearLayout>

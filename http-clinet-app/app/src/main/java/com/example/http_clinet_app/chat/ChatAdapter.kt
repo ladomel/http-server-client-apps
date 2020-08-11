@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.http_clinet_app.R
 import com.example.http_clinet_app.model.Chat
+import com.example.http_clinet_app.util.DateUtil
 import kotlinx.android.synthetic.main.single_chat_view.view.*
 import java.text.SimpleDateFormat
 
@@ -50,7 +51,7 @@ class ChatAdapter(
         holder.name.text = user.nickname
         holder.text.text = value.message?.text ?: ""
 
-        holder.time.text = SimpleDateFormat("mm").format(value.message?.date) + " min"
+        holder.time.text = value.message?.date?.let { DateUtil.getTimeElapsed(it) }
 
         holder.wholeView.setOnClickListener {
             clickHandler(value)

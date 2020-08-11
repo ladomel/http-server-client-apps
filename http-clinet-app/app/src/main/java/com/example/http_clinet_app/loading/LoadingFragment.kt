@@ -21,13 +21,14 @@ class LoadingFragment : Fragment(), LoadingContract.View {
     ): View? {
         presenter = LoadingPresenterImpl(this)
 
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
-        if (sharedPref != null) {
-            with(sharedPref.edit()) {
-                putString("UserId", "a")
-                apply()
-            }
-        }
+        // Testing
+//        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+//        if (sharedPref != null) {
+//            with(sharedPref.edit()) {
+//                putString("UserId", "a")
+//                apply()
+//            }
+//        }
 
         val userId = activity?.getPreferences(Context.MODE_PRIVATE)
             ?.getString("UserId", null)
