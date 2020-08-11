@@ -24,7 +24,7 @@ class LoadingFragment : Fragment(), LoadingContract.View {
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
         if (sharedPref != null) {
             with(sharedPref.edit()) {
-                putString("UserId", "")
+                putString("UserId", "a")
                 apply()
             }
         }

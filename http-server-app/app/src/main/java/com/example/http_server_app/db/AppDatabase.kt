@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @TypeConverters(AppTypeConverters::class)
-@Database(entities = [User::class, Chat::class, Message::class], version = 2)
+@Database(entities = [User::class, Chat::class, Message::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun getUserDao(): UserDao

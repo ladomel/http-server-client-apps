@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <solid android:color="@color/colorGrey" />
+    <solid android:color="@color/colorLightGrey" />
 
     <corners android:radius="15dp" />
 </shape>

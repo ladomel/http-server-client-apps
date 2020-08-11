@@ -40,13 +40,18 @@ class LoginFragment : Fragment(), LoginContract.View {
         val imageView = v.findViewById<ImageView>(R.id.image)
         val nicknameView = v.findViewById<EditText>(R.id.nickname)
         nicknameView.setText(user.nickname)
+        nicknameView.isEnabled = user.id.isEmpty()
         val descView = v.findViewById<EditText>(R.id.description)
         descView.setText(user.description)
-        v.findViewById<Button>(R.id.startButton).setOnClickListener {
+        descView.isEnabled = user.id.isEmpty()
+
+        val startButton = v.findViewById<Button>(R.id.startButton)
+        startButton.setOnClickListener {
             user.nickname = nicknameView.text.toString()
             user.description = descView.text.toString()
 //            user.image = "aaaa"
             presenter.login(user)
+            startButton.isEnabled = false
         }
 
         return v
@@ -62,7 +67,7 @@ class LoginFragment : Fragment(), LoginContract.View {
         }
 
         requireView().findNavController()
-            .navigate(LoginFragmentDirections.actionLoginFragmentToMessagesFragment(user = user))
+            .navigate(LoginFragmentDirections.actionLoginFragmentToChatFragment())
     }
 
     override fun showMessage(text: String) {

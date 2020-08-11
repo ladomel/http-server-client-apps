@@ -4,10 +4,13 @@ import com.example.http_server_app.db.AppDatabase
 import com.example.http_server_app.db.Chat
 import com.example.http_server_app.db.Message
 import com.example.http_server_app.db.User
+import com.example.http_server_app.model.ChatModel
 import com.google.gson.Gson
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
 import java.io.InputStream
@@ -26,6 +29,10 @@ class MainPresenterImpl(var db: AppDatabase) : MainContract.Presenter {
     }
 
     override fun stopServer() {
+//        GlobalScope.launch {
+//            db.getMessageDao().truncate()
+//            db.getChatDao().truncate()
+//        }
         httpServer.stop(0)
         serverRunning = false
     }
@@ -105,9 +112,9 @@ class MainPresenterImpl(var db: AppDatabase) : MainContract.Presenter {
                     val page = (queryParams["page"] ?: error("")).toInt()
                     val limit = (queryParams["limit"] ?: error("")).toInt()
 
-                    val user = db.getChatDao().loadChatsByUser(userId, limit, (page - 1) * limit)
+                    val chats = db.getChatDao().loadChatsByUser(userId, limit, (page - 1) * limit)
 
-                    sendResponse(exchange, 200, user)
+                    sendResponse(exchange, 200, chats.map { getChatModel(it) })
                 }
                 "POST" -> {
                     val requestBody = streamToString(exchange.requestBody)
@@ -117,7 +124,7 @@ class MainPresenterImpl(var db: AppDatabase) : MainContract.Presenter {
                     val newChat = Chat(
                         fromUserId = jsonBody.getString("from"),
                         toUserId = jsonBody.getString("to"),
-                        lastDate = date
+                        lastMessageDate = date
                     )
 
                     val chatId = db.getChatDao().insertChat(newChat)
@@ -131,10 +138,36 @@ class MainPresenterImpl(var db: AppDatabase) : MainContract.Presenter {
 
                     db.getMessageDao().insertMessage(newMessage)
 
-                    sendResponse(exchange, 200, newChat)
+                    val chatModel = ChatModel(
+                        id = chatId.toInt(),
+                        fromUser = db.getUserDao().getUser(newChat.fromUserId),
+                        toUser = db.getUserDao().getUser(newChat.toUserId),
+                        message = newMessage
+                    )
+
+                    sendResponse(exchange, 200, chatModel)
+                }
+                "DELETE" -> {
+                    val queryParams = getQueryParams(exchange.requestURI.query)
+                    val id = (queryParams["id"] as String).toInt()
+
+                    db.getMessageDao().deleteMessages(id)
+
+                    db.getChatDao().deleteChat(id)
                 }
             }
         }
+    }
+
+    private fun getChatModel(newChat: Chat): ChatModel {
+        val res = db.getMessageDao().getLastChatMessage(newChat.id)
+        val aa = db.getMessageDao().loadAllMessages()
+        return ChatModel(
+            id = newChat.id,
+            fromUser = db.getUserDao().getUser(newChat.fromUserId),
+            toUser = db.getUserDao().getUser(newChat.toUserId),
+            message = res
+        )
     }
 
     private val messageHandler = HttpHandler { exchange ->
@@ -149,14 +182,22 @@ class MainPresenterImpl(var db: AppDatabase) : MainContract.Presenter {
                     val requestBody = streamToString(exchange.requestBody)
                     val jsonBody = JSONObject(requestBody)
 
+                    val date = Date()
+                    val chatId = jsonBody.getInt("chatId")
+                    val text = jsonBody.getString("text")
+
                     val newMessage = Message(
-                        chatId = jsonBody.getInt("chatId"),
+                        chatId = chatId,
                         userId = jsonBody.getString("userId"),
-                        text = jsonBody.getString("text"),
-                        date = Date()
+                        text = text,
+                        date = date
                     )
 
                     db.getMessageDao().insertMessage(newMessage)
+
+                    val chat = db.getChatDao().getChat(chatId)
+                    chat.lastMessageDate = date
+                    db.getChatDao().updateChat(chat)
 
                     sendResponse(exchange, 200, newMessage)
                 }

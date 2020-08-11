@@ -24,5 +24,5 @@ data class Chat (
     val id: Int = 0,
     var fromUserId: String,
     var toUserId: String,
-    var lastDate: Date
+    var lastMessageDate: Date
 ) : Parcelable
